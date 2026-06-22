@@ -780,6 +780,12 @@
   height: 100%;
   object-fit: cover; /* This makes the image fit beautifully */
   }
+  .image-container.java1-img {
+  width: 380px;   /* Slightly larger than the default 300px */
+  height: 254px;  /* Slightly larger than the default 200px */
+  margin-left: auto;  /* Centers the container horizontally */
+  margin-right: auto;
+  }
   .center-image {
     display: block;        /* Changes image from inline to block */
     margin-left: auto;     /* Pushes space from the left */
@@ -841,7 +847,7 @@
       <h1>The<br><em>Gang Goes to </em><br>Indonesia
 
       </h1>
-      <div class="image-container">
+      <div class="image-container java1-img">
           <img src="images/home1.jpg"/>
       </div>
       <!-- <div class="flex-container">
@@ -991,6 +997,81 @@
       </div>
     </div>
   </section>
+
+
+    <!-- Calendar -->
+  <section style="background: var(--teal); padding: 4rem 2rem;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+      <div class="section-eyebrow" style="color:#FAF6F0;">Save the Date</div>
+      <h2 class="section-title" style="color:#FAF6F0;">May &ndash; June <em>2027</em></h2>
+      <table style="width:100%; max-width:560px; margin:2rem auto 0; border-collapse:collapse; color:#FAF6F0; font-family:'Special Elite', monospace; text-align:center;">
+        <thead>
+          <tr>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">SUN</th>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">MON</th>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">TUE</th>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">WED</th>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">THU</th>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">FRI</th>
+            <th style="padding:0.75rem 0; opacity:0.6; font-weight:normal; letter-spacing:2px; border-bottom:1px solid rgba(250,246,240,0.25);">SAT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Week of May 16 -->
+          <tr>
+            <td style="padding:0.9rem 0;">16</td>
+            <td style="padding:0.9rem 0;">17</td>
+            <td style="padding:0.9rem 0;">18</td>
+            <td style="padding:0.9rem 0;">19</td>
+            <td style="padding:0.9rem 0;">20</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">21</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">22</td>
+          </tr>
+          <!-- Week of May 23 -->
+          <tr>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">23</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">24</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">25</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">26</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">27</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">28</td>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">29</td>
+          </tr>
+          <!-- Week of May 30 → June 5 -->
+          <tr>
+            <td style="padding:0.9rem 0; background:var(--coral); color:#FAF6F0;">30</td>
+            <td style="padding:0.9rem 0; background:linear-gradient(135deg, var(--coral) 0%, var(--coral) 50%, var(--gold) 50%, var(--gold) 100%); color:#FAF6F0;">31</td>
+            <td style="padding:0.9rem 0; background:var(--gold); color:var(--teal);"><span style="display:block; font-size:0.55em; letter-spacing:1px; opacity:0.8;">JUN</span>1</td>
+            <td style="padding:0.9rem 0; background:var(--gold); color:var(--teal);">2</td>
+            <td style="padding:0.9rem 0; background:var(--gold); color:var(--teal);">3</td>
+            <td style="padding:0.9rem 0; background:var(--gold); color:var(--teal);">4</td>
+            <td style="padding:0.9rem 0; background:var(--gold); color:var(--teal);">5</td>
+          </tr>
+          <!-- Week of June 6 -->
+          <tr>
+            <td style="padding:0.9rem 0; background:var(--gold); color:var(--teal);">6</td>
+            <td style="padding:0.9rem 0;">7</td>
+            <td style="padding:0.9rem 0;">8</td>
+            <td style="padding:0.9rem 0;">9</td>
+            <td style="padding:0.9rem 0;">10</td>
+            <td style="padding:0.9rem 0;">11</td>
+            <td style="padding:0.9rem 0;">12</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:1.5rem; color:#FAF6F0; font-family:'Special Elite', monospace; font-size:0.85rem;">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="width:1rem; height:1rem; background:var(--coral); display:inline-block; border-radius:2px;"></span>
+          May 21 &ndash; 31
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="width:1rem; height:1rem; background:var(--gold); display:inline-block; border-radius:2px;"></span>
+          May 31 &ndash; June 6
+        </div>
+      </div>
+    </div>
+  </section>
+
 
   <!-- TIPS & LOGISTICS -->
   <section style="background: var(--cream); padding: 4rem 2rem;">
@@ -1435,8 +1516,142 @@
       </div>
     </div>
 
+    <hr class="dashed-divider">
+
+    <div class="section-eyebrow">Where We Stay</div>
+    <h2 class="section-title">Housing <em>Options</em></h2>
+    <p class="section-intro">From private pool villas in Ubud to beachfront stays in Seminyak — here's the full breakdown of where the group can stay, with prices and trade-offs.</p>
+    <button class="booking-cta" style="background: var(--teal);" onclick="showPage('bali-housing')">→ Explore Housing Options</button>
+
   </div>
 </div><!-- /page-bali -->
+
+
+<!-- ══════════════════════════════════════════
+     BALI HOUSING SUB-PAGE  (template — fill in)
+══════════════════════════════════════════ -->
+<div id="page-bali-housing" class="page">
+
+  <div class="bali-hero">
+    <div class="dest-hero-inner">
+      <div class="dest-hero-top">
+        <div class="dest-hero-text">
+          <div class="dest-page-stamp">Stop 02 · Bali · Housing</div>
+          <h1 class="dest-h1">Where We<em>Stay</em>
+            <div class="image-container">
+              <img src="images/bali1.jpg"/><!-- TODO: swap for a housing photo -->
+            </div>
+          </h1>
+          <p class="dest-tagline"><!-- TODO: intro tagline about Bali housing --></p>
+          <div class="dest-stats">
+            <div class="dest-stat">
+              <div class="s-num"><!-- TODO --></div>
+              <div class="s-label"><!-- TODO --></div>
+            </div>
+            <div class="dest-stat">
+              <div class="s-num"><!-- TODO --></div>
+              <div class="s-label"><!-- TODO --></div>
+            </div>
+            <div class="dest-stat">
+              <div class="s-num"><!-- TODO --></div>
+              <div class="s-label"><!-- TODO --></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Back link to the Bali page -->
+    <button class="booking-cta" style="background: var(--teal); margin-bottom: 1.5rem;" onclick="showPage('bali')">← Back to Bali</button>
+
+    <div class="tape">Villas · Airbnbs · Where to Sleep</div>
+
+    <p class="section-intro"><!-- TODO: overview paragraph about housing options in Bali --></p>
+
+    <div class="section-eyebrow">Compare Your Options</div>
+    <h2 class="section-title">Housing <em>Options</em></h2>
+
+    <!-- Option cards — duplicate an .activity-card block for each housing option -->
+    <div class="activities-grid">
+
+      <div class="activity-card">
+        <div class="card-color-bar" style="background: var(--jungle);"></div>
+        <div class="card-body">
+          <div class="card-tag"><!-- TODO: e.g. Private Villa · Ubud --></div>
+          <div class="card-name">Luxury Beach Front Villa with Infinity Pool, Staff and Breathtaking Views!</div>
+          <div class="card-desc">
+            <p>Private villa with 5 bedrooms, infinity pool, and direct beach access. Includes daily staff for cleaning and breakfast. Perfect for groups looking for luxury and privacy.</p>
+            <ul>
+              <li>5 Bedrooms</li>
+              <li>5 Bathrooms</li>
+              <li>Infinity Pool</li>
+              <li>Beach Access</li>
+              <li>Daily Staff Service</li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$336 a night</span>
+            <span class="card-duration">$100pp for 3 nights for 10 people</span>
+          </div>
+          <div class="image-container">
+            <img src="images/BaliVilla1.avif"/><!-- TODO: housing photo -->
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="card-color-bar" style="background: var(--coral);"></div>
+        <div class="card-body">
+          <div class="card-tag"><!-- TODO --></div>
+          <div class="card-name"><!-- TODO --></div>
+          <div class="card-desc"><!-- TODO --></div>
+          <div class="card-footer">
+            <span class="card-price"><!-- TODO --></span>
+            <span class="card-duration"><!-- TODO --></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="card-color-bar" style="background: var(--gold);"></div>
+        <div class="card-body">
+          <div class="card-tag"><!-- TODO --></div>
+          <div class="card-name"><!-- TODO --></div>
+          <div class="card-desc"><!-- TODO --></div>
+          <div class="card-footer">
+            <span class="card-price"><!-- TODO --></span>
+            <span class="card-duration"><!-- TODO --></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="dashed-divider">
+
+    <div class="highlight-box">
+      <h3>adawd<!-- TODO: a key housing tip or recommendation --></h3>
+      <p><!-- TODO --></p>
+    </div>
+
+    <!-- Quick tips — duplicate .tip-card blocks as needed -->
+    <div class="tips-grid" style="margin-top: 2.5rem;">
+      <div class="tip-card">
+        <div class="tip-icon"><!-- TODO: emoji --></div>
+        <div class="tip-title">QSQSQS<!-- TODO --></div>
+        <div class="tip-text"><!-- TODO --></div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon"><!-- TODO: emoji --></div>
+        <div class="tip-title"><!-- TODO --></div>
+        <div class="tip-text"><!-- TODO --></div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-bali-housing -->
 
 
 <!-- ══════════════════════════════════════════
@@ -1659,7 +1874,7 @@
 
     // Activate correct nav button
     const buttons = document.querySelectorAll('.nav-btn');
-    const map = { home: 0, komodo: 1, bali: 2, java: 3 };
+    const map = { home: 0, komodo: 1, bali: 2, java: 3, 'bali-housing': 2 };
     if (map[id] !== undefined) buttons[map[id]].classList.add('active');
 
     // Scroll to top
