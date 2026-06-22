@@ -780,7 +780,20 @@
   height: 100%;
   object-fit: cover; /* This makes the image fit beautifully */
   }
+  .center-image {
+    display: block;        /* Changes image from inline to block */
+    margin-left: auto;     /* Pushes space from the left */
+    margin-right: auto;    /* Pushes space from the right */
+    max-width: 100%;       /* Ensures responsiveness on small screens */
+    height: auto;          /* Maintains the proper aspect ratio */
+  }
 
+  .flex-container {
+    display: flex;
+    justify-content: center; /* Centers the image horizontally */
+    align-items: center;     /* Centers the image vertically */
+    height: 300px;           /* Requires a set height for vertical centering to work */
+  }
   /* ── FOOTER ──────────────────────────────────────── */
   footer {
     background: var(--ink);
@@ -826,10 +839,15 @@
     <div class="hero-inner">
       <div class="hero-stamp">Group Adventure · Indonesia</div>
       <h1>The<br><em>Gang Goes to </em><br>Indonesia
-        <div class="large-image-container">
-          <img src="images/home1.jpg"/>
-        </div>
+
       </h1>
+      <div class="image-container">
+          <img src="images/home1.jpg"/>
+      </div>
+      <!-- <div class="flex-container">
+          <img src="images/home1.jpg"/>
+      </div> -->
+
       <p class="hero-sub">Dragons, temples, volcanoes, and a whole lot of rice wine.<br>Our bucket-list trip is officially happening.</p>
       <div class="hero-details">
         <div class="hero-detail"><div class="num">9–14</div><div class="label">Total Days</div></div>
@@ -1028,7 +1046,9 @@
         <div class="dest-hero-text">
           <div class="dest-page-stamp">Stop 01 · Komodo Islands</div>
           <h1 class="dest-h1">Komodo<em>Dragon</em>Country
-            <img src="images/komodo1.webp"/>
+            <div class = "image-container">
+              <img src="images/komodo1.webp"/>
+            </div>
           </h1>
           <!-- <img src="images/mtbromo.jpeg"/> -->
           <!-- <div class="image-container"> -->
