@@ -759,6 +759,28 @@
     color: var(--muted);
   }
 
+  .image-container {
+  width: 300px;  /* Set any width you want */
+  height: 200px; /* Set any height you want */
+  overflow: hidden; 
+  }
+  .large-image-container {
+  width: 500px;  /* Set any width you want */
+  height: 500px; /* Set any height you want */
+  overflow: hidden; 
+  }
+
+  .large-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This makes the image fit beautifully */
+  }
+  .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This makes the image fit beautifully */
+  }
+
   /* ── FOOTER ──────────────────────────────────────── */
   footer {
     background: var(--ink);
@@ -780,6 +802,7 @@
     .nav-btn { padding: 1rem 0.5rem; font-size: 0.72rem; }
     .nav-logo { display: none; }
   }
+  
 </style>
 </head>
 <body>
@@ -802,7 +825,11 @@
     <div class="hero-pattern"></div>
     <div class="hero-inner">
       <div class="hero-stamp">Group Adventure · Indonesia</div>
-      <h1>The<br><em>Gang Goes to </em><br>Indonesia</h1>
+      <h1>The<br><em>Gang Goes to </em><br>Indonesia
+        <div class="large-image-container">
+          <img src="images/home1.jpg"/>
+        </div>
+      </h1>
       <p class="hero-sub">Dragons, temples, volcanoes, and a whole lot of rice wine.<br>Our bucket-list trip is officially happening.</p>
       <div class="hero-details">
         <div class="hero-detail"><div class="num">9–14</div><div class="label">Total Days</div></div>
@@ -1000,7 +1027,13 @@
       <div class="dest-hero-top">
         <div class="dest-hero-text">
           <div class="dest-page-stamp">Stop 01 · Komodo Islands</div>
-          <h1 class="dest-h1">Komodo<em>Dragon</em>Country</h1>
+          <h1 class="dest-h1">Komodo<em>Dragon</em>Country
+            <img src="images/komodo1.webp"/>
+          </h1>
+          <!-- <img src="images/mtbromo.jpeg"/> -->
+          <!-- <div class="image-container"> -->
+            <!-- <img src="images/mtbromo.jpeg"/> -->
+          <!-- </div> -->
           <p class="dest-tagline">Indonesia's most primal corner — ancient reptiles, electric-blue waters, and the feeling that you've sailed off the edge of the map.</p>
           <div class="dest-stats">
             <div class="dest-stat">
@@ -1084,6 +1117,9 @@
             <span class="card-price">Included</span>
             <span class="card-duration">2–3 hrs</span>
           </div>
+          <div class="image-container">
+            <img src="images/komodo2.webp"/>
+          </div>
         </div>
       </div>
       <div class="activity-card">
@@ -1095,6 +1131,9 @@
           <div class="card-footer">
             <span class="card-price">Included</span>
             <span class="card-duration">Afternoon</span>
+          </div>
+          <div class="image-container">
+            <img src="images/komodo3.jpeg"/>
           </div>
         </div>
       </div>
@@ -1108,6 +1147,9 @@
             <span class="card-price">Included</span>
             <span class="card-duration">2 hrs</span>
           </div>
+          <div class="image-container">
+            <img src="images/komodo4.jpeg"/>
+          </div>
         </div>
       </div>
       <div class="activity-card">
@@ -1119,6 +1161,9 @@
           <div class="card-footer">
             <span class="card-price">Included</span>
             <span class="card-duration">1 hr hike</span>
+          </div>
+          <div class="image-container">
+            <img src="images/komodo5.jpeg"/>
           </div>
         </div>
       </div>
@@ -1195,7 +1240,11 @@
       <div class="dest-hero-top">
         <div class="dest-hero-text">
           <div class="dest-page-stamp">Stop 02 · Island of the Gods</div>
-          <h1 class="dest-h1">Bali<em>Untamed</em></h1>
+          <h1 class="dest-h1">Bali<em>Untamed</em>
+            <div class="image-container">
+              <img src="images/bali1.jpg"/>
+            </div>
+          </h1>
           <p class="dest-tagline">Rice terraces, sea temples, jungle swings, and the best $2 meal you'll ever eat. The relaxing (and occasionally adrenaline-fueled) heart of our trip.</p>
           <div class="dest-stats">
             <div class="dest-stat">
@@ -1380,7 +1429,11 @@
       <div class="dest-hero-top">
         <div class="dest-hero-text">
           <div class="dest-page-stamp">Stop 03 · East Java, Indonesia</div>
-          <h1 class="dest-h1">East<em>Java</em></h1>
+          <h1 class="dest-h1">East<em>Java</em>
+            <div class="image-container">
+              <img src="images/java1.jpeg"/>
+            </div>
+          </h1>
           <p class="dest-tagline">Blue fire, sulfur mines, alien caldera landscapes, and a waterfall so big they call it Indonesia's Niagara. This is the hiking chapter.</p>
           <div class="dest-stats">
             <div class="dest-stat">
@@ -1455,6 +1508,9 @@
             <span class="card-price">Included in tour</span>
             <span class="card-duration">Start 1am · 4–5 hrs</span>
           </div>
+          <div class="image-container">
+            <img src="images/MtIjen.jpg"/>
+          </div>
         </div>
       </div>
       <div class="activity-card">
@@ -1467,6 +1523,10 @@
             <span class="card-price">$40 (day trip) or included in tour</span>
             <span class="card-duration">Start 2:30am · Full day</span>
           </div>
+          <div class="image-container">
+            <img src="images/mtbromo.jpeg"/>
+          </div>
+          <!-- <img src="images/mtbromo.jpeg"/> -->
         </div>
       </div>
       <div class="activity-card">
@@ -1479,6 +1539,11 @@
             <span class="card-price">Included in tour</span>
             <span class="card-duration">Half Day</span>
           </div>
+          <div class="image-container">
+            <img src="images/tumpak-sewu-waterfalls1.jpg"/>
+          </div>
+          <!-- <img src="images/tumpak-sewu-waterfalls1.jpg"/> -->
+          <!-- <img src="images/tumpak-sewu-waterfalls2.jpg"/> -->
         </div>
       </div>
     </div>
