@@ -819,7 +819,7 @@
       </div>
     </section>
   </div>
-  <div class="form-container">
+  <!-- <div class="form-container">
     <h3>Submit Your Data</h3>
     <form @submit.prevent="handleSubmit">
       <input v-model="formData.username" placeholder="Username" required />
@@ -832,51 +832,51 @@
       <button type="submit" :disabled="isSubmitting">Save to Backend</button>
     </form>
     <p v-if="statusMessage">{{ statusMessage }}</p>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
-  import { ref } from "vue";
+  // import { ref } from "vue";
   import { navigate } from "../navigation";
-  import { createClient } from "@supabase/supabase-js";
+  // import { createClient } from "@supabase/supabase-js";
 
   // 1. Initialize the Supabase client
   // Note: It is safe to expose these specific keys on GitHub Pages if RLS is enabled.
-  import.meta.env.VITE_SUPABASE_URL;
+  // import.meta.env.VITE_SUPABASE_URL;
   // const supabaseUrl = "https://supabase.co";
   // const supabaseAnonKey = "your-anon-public-api-key";
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-  console.log(supabaseUrl);
-  console.log(supabaseAnonKey);
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  // const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  // const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  // console.log(supabaseUrl);
+  // console.log(supabaseAnonKey);
+  // const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-  // 2. Reactive state
-  const formData = ref({ username: "", score: 0 });
-  const isSubmitting = ref(false);
-  const statusMessage = ref("");
+  // // 2. Reactive state
+  // const formData = ref({ username: "", score: 0 });
+  // const isSubmitting = ref(false);
+  // const statusMessage = ref("");
 
   // 3. Submit function
-  async function handleSubmit() {
-    isSubmitting.value = true;
-    statusMessage.value = "Saving...";
+  // async function handleSubmit() {
+  //   isSubmitting.value = true;
+  //   statusMessage.value = "Saving...";
 
-    try {
-      // Insert data into your remote 'leaderboard' table
-      const { error } = await supabase
-        .from("leaderboard")
-        .insert([
-          { name: formData.value.username, points: formData.value.score },
-        ]);
+  //   try {
+  //     // Insert data into your remote 'leaderboard' table
+  //     const { error } = await supabase
+  //       .from("leaderboard")
+  //       .insert([
+  //         { name: formData.value.username, points: formData.value.score },
+  //       ]);
 
-      if (error) throw error;
+  //     if (error) throw error;
 
-      statusMessage.value = "Data successfully saved to the cloud!";
-      formData.value = { username: "", score: 0 }; // Reset form
-    } catch (err) {
-      statusMessage.value = `Error: ${err instanceof Error ? err.message : String(err)}`;
-    } finally {
-      isSubmitting.value = false;
-    }
-  }
+  //     statusMessage.value = "Data successfully saved to the cloud!";
+  //     formData.value = { username: "", score: 0 }; // Reset form
+  //   } catch (err) {
+  //     statusMessage.value = `Error: ${err instanceof Error ? err.message : String(err)}`;
+  //   } finally {
+  //     isSubmitting.value = false;
+  //   }
+  // }
 </script>
