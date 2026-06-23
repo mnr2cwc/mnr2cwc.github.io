@@ -55,6 +55,10 @@
       } else if (selectedItem.value) {
         username.value = selectedItem.value;
       }
+      console.log("USers : ");
+      console.log(users.value);
+      console.log("user : ");
+      console.log(username.value);
       const ok = await login(
         username.value,
         submitting,
