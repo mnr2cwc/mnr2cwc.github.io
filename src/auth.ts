@@ -81,7 +81,7 @@ async function get_users(supabase: any): Promise<any[] | null> {
   return data;
 }
 export async function verifyCredentials(
-  username: string,
+  username: string | { id: number; name: string },
   isSubmitting: any,
   statusMessage: any,
   formData: any,
