@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { currentPage, navigate } from '../navigation'
+  import { computed } from "vue";
+  import { currentPage, navigate } from "../navigation";
+  import { logout, get_user } from "../auth";
 
-// bali-housing is a sub-page of Bali, so the Bali tab stays highlighted there.
-const baliActive = computed(
-  () => currentPage.value === 'bali' || currentPage.value === 'bali-housing',
-)
+  // bali-housing is a sub-page of Bali, so the Bali tab stays highlighted there.
+  const baliActive = computed(
+    () => currentPage.value === "bali" || currentPage.value === "bali-housing",
+  );
 </script>
 
 <template>
@@ -25,7 +26,11 @@ const baliActive = computed(
     >
       Komodo
     </button>
-    <button class="nav-btn" :class="{ active: baliActive }" @click="navigate('bali')">
+    <button
+      class="nav-btn"
+      :class="{ active: baliActive }"
+      @click="navigate('bali')"
+    >
       Bali
     </button>
     <button
@@ -34,6 +39,9 @@ const baliActive = computed(
       @click="navigate('java')"
     >
       East Java
+    </button>
+    <button class="nav-btn nav-logout" @click="logout">
+      Log Out : {{ get_user() }}
     </button>
   </nav>
 </template>

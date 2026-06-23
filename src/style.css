@@ -60,6 +60,8 @@ nav {
 
 .nav-btn:hover { color: var(--sand); }
 
+.nav-logout { margin-left: auto; }
+
 .nav-btn.active {
   color: var(--coral);
 }
