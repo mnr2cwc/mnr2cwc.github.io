@@ -78,6 +78,13 @@
       submitting.value = false;
     }
   }
+
+  function test() {
+    console.log("USers : ");
+    console.log(users.value);
+    console.log("user : ");
+    console.log(username.value);
+  }
   // Selecting a person from the dropdown fills in the username used for login.
   watch(selectedItem, (person) => {
     if (person) username.value = person.name;
@@ -124,6 +131,7 @@
           {{ submitting ? "Signing in…" : "→ Enter" }}
         </button>
       </form>
+      <button @click="test">ACTION</button>
       <p v-if="statusMessage">{{ statusMessage }}</p>
     </div>
   </div>
