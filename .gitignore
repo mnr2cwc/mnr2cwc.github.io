@@ -1,0 +1,20 @@
+node_modules
+*.local
+.DS_Store
+*.tsbuildinfo
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Vite logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# NOTE: docs/ is intentionally NOT ignored — it is the build output that
+# GitHub Pages serves.
