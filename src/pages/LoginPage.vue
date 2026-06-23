@@ -122,7 +122,7 @@
         </label>
 
         <p v-if="error" class="login-error">{{ error }}</p>
-
+        <button type="button" @click="test">ACTION</button>
         <button
           type="submit"
           class="booking-cta login-btn"
@@ -131,7 +131,7 @@
           {{ submitting ? "Signing in…" : "→ Enter" }}
         </button>
       </form>
-      <button @click="test">ACTION</button>
+
       <p v-if="statusMessage">{{ statusMessage }}</p>
     </div>
   </div>
