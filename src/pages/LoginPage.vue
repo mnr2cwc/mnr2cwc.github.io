@@ -44,21 +44,16 @@
     users.value = (await get_users()) ?? participants.value;
   });
   // users.value = await get_users();
-  // console.log(users);
 
   async function onSubmit() {
     error.value = "";
     submitting.value = true;
     try {
-      if (typeof username.value == "string") {
+      if (username.value !== selectedItem?.value?.name) {
         username.value = username.value;
       } else if (selectedItem.value) {
         username.value = selectedItem.value;
       }
-      console.log("USers : ");
-      console.log(users.value);
-      console.log("user : ");
-      console.log(username.value);
       const ok = await login(
         username.value,
         submitting,
@@ -73,18 +68,13 @@
       }
       // On success, App.vue reacts to isAuthenticated and swaps in the site.
     } catch (e) {
+      console.log(e);
       error.value = "Something went wrong. Please try again.";
     } finally {
       submitting.value = false;
     }
   }
 
-  function test() {
-    console.log("USers : ");
-    console.log(users.value);
-    console.log("user : ");
-    console.log(username.value);
-  }
   // Selecting a person from the dropdown fills in the username used for login.
   watch(selectedItem, (person) => {
     if (person) username.value = person.name;
@@ -122,7 +112,6 @@
         </label>
 
         <p v-if="error" class="login-error">{{ error }}</p>
-        <button type="button" @click="test">ACTION</button>
         <button
           type="submit"
           class="booking-cta login-btn"
