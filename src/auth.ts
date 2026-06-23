@@ -89,10 +89,10 @@ export async function verifyCredentials(
 ): Promise<boolean> {
   // need to check if this data exists in the supabase database, if it does then return true, else return false
   let users = await get_users(supabase);
-  // console.log("USers : ");
-  // console.log(users);
-  // console.log("Username : ");
-  // console.log(username);
+  console.log("USers : ");
+  console.log(users);
+  console.log("Username : ");
+  console.log(username);
   if (typeof username == "string") {
     handleSubmit(username, isSubmitting, statusMessage, formData, supabase);
     user = username;
