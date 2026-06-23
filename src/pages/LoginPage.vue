@@ -50,7 +50,9 @@
     error.value = "";
     submitting.value = true;
     try {
-      if (selectedItem.value) {
+      if (typeof username.value == "string") {
+        username.value = username.value;
+      } else if (selectedItem.value) {
         username.value = selectedItem.value;
       }
       const ok = await login(
