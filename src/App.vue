@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { currentPage } from './navigation'
 import ProfilePage from './pages/ProfilePage.vue'
 import FlightsPage from './pages/FlightsPage.vue'
@@ -14,6 +15,12 @@ import WelcomePage from './pages/WelcomePage.vue'
 import { visitor, isNamedVisitor, authReady, initializeSession, leaveSession, sessionError } from './visitor'
 
 initializeSession()
+
+// Preserve the third-party flight widget's DOM and search state after first use.
+const flightsVisited = ref(false)
+watch(currentPage, (page) => {
+  if (page === 'flights') flightsVisited.value = true
+}, { immediate: true })
 </script>
 
 <template>
@@ -32,12 +39,13 @@ initializeSession()
   <BaliPage v-else-if="currentPage === 'bali'" />
   <BaliHousingPage v-else-if="currentPage === 'bali-housing'" />
   <JavaPage v-else-if="currentPage === 'java'" />
-  <FlightsPage v-else-if="currentPage === 'flights'" />
   <PeoplePage v-else-if="currentPage === 'people' && isNamedVisitor" />
   <ProfilePage v-else-if="currentPage === 'profile' && isNamedVisitor" />
-
-  <SiteFooter />
   </template>
+  <div v-if="flightsVisited" v-show="visitor && authReady && currentPage === 'flights'">
+    <FlightsPage />
+  </div>
+  <SiteFooter v-if="visitor && authReady" />
 </template>
 
 <style scoped>

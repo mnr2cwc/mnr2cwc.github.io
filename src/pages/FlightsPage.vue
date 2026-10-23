@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+
+const widgetFailed = ref(false)
+
+onMounted(() => {
+  // Load only after both widget containers exist. Keep this page mounted in App.vue
+  // so the provider's single initialization survives navigation between tabs.
+  const script = document.createElement('script')
+  script.async = true
+  script.type = 'module'
+  script.src = 'https://tpscr.com/wl_web/main.js?wl_id=23798'
+  script.addEventListener('error', () => { widgetFailed.value = true }, { once: true })
+  document.head.appendChild(script)
+})
 
 const origin = ref('')
 const searchQuery = computed(() => `Round trip flights from ${origin.value.trim().toUpperCase()} to DPS departing June 25 2027 returning July 11 2027`)
@@ -13,7 +26,13 @@ const searchQuery = computed(() => `Round trip flights from ${origin.value.trim(
     <section class="flight-card" aria-label="Search flights to Bali">
       <div class="destination"><span aria-hidden="true">✈</span><div><h2>Bali, Indonesia</h2><p>Ngurah Rai International Airport · DPS</p></div></div>
       <dl class="dates"><div><dt>Departure</dt><dd>June 25, 2027</dd></div><div><dt>Return</dt><dd>July 11, 2027</dd></div></dl>
-      <p class="date-note">Searching June 25–July 11. Our trip dates are flexible by a day; you can adjust them in Google Flights.</p>
+      <p class="date-note">Our suggested dates are June 25–July 11, 2027, flexible by a day. Choose your airports, dates, and passengers in the search form below.</p>
+      <p class="hint">Search flights and compare airlines and prices here. Selecting a booking offer opens an external airline or travel agency website, where you complete your purchase.</p>
+      <p v-if="widgetFailed" role="alert" class="hint">Flight search could not load. Please reload the page or use Google Flights below.</p>
+      <div id="tpwl-search"></div>
+      <div id="tpwl-tickets"></div>
+      <details class="fallback">
+        <summary>Search unavailable? Use Google Flights</summary>
       <form action="https://www.google.com/travel/flights" method="get" target="_blank" rel="noopener noreferrer">
         <label for="origin-airport">Your origin airport</label>
         <input id="origin-airport" v-model="origin" required pattern="[A-Za-z]{3}" minlength="3" maxlength="3" placeholder="e.g. IND" title="Enter a three-letter airport code, such as IND, JFK, or LAX." autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="origin-help" />
@@ -23,12 +42,20 @@ const searchQuery = computed(() => `Round trip flights from ${origin.value.trim(
         <button type="submit">Search Google Flights <span aria-hidden="true">↗</span></button>
         <p class="hint">Opens Google Flights in a new tab with your route and dates. Review the search details there for current prices and availability.</p>
       </form>
+      </details>
     </section>
   </main>
 </template>
 
 <style scoped>
-.flights-page { max-width: 760px; min-height: 70vh; margin: auto; padding: 3rem 1.25rem 5rem; }
+.flights-page { max-width: 1200px; min-height: 70vh; margin: auto; padding: 3rem 1.25rem 5rem; }
+#tpwl-search, #tpwl-tickets { width: 100%; min-width: 0; margin-top: 1.5rem; }
+.fallback { margin-top: 2rem; }
+summary { color: var(--teal); cursor: pointer; line-height: 1.6; }
+@media (max-width: 600px) {
+  .flights-page { padding-inline: 0.75rem; }
+  .flight-card { padding: 1rem 0.5rem; }
+}
 .intro { margin: 1rem 0 2rem; color: var(--muted); line-height: 1.6; }
 .flight-card { padding: clamp(1.25rem, 4vw, 2.5rem); background: var(--cream); border-radius: 22px; }
 .destination { display: flex; gap: 1rem; align-items: center; }

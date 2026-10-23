@@ -1,6 +1,32 @@
 # mnr2cwc.github.io
 Indonesia Trip Planning
 
+## Flight search
+
+The Flights page embeds Travelpayouts White Label Web **Widget** 23798 using
+the account-generated `https://tpscr.com/wl_web/main.js?wl_id=23798` module
+and the `tpwl-search` / `tpwl-tickets` containers. The module is loaded into
+the document head after the containers mount, on the first visit to Flights.
+The page remains mounted during navigation to preserve widget state.
+This uses public embed configuration, no private API token or Firebase backend.
+
+Manage the approved website Project, language, currency, default destination,
+colors, and Show hotels setting in Travelpayouts → White Label → WL Web.
+Disable Show hotels to avoid the provider's additional hotel tab behavior.
+The displayed trip dates are suggestions; users must select/check the actual
+dates and passengers in the provider's form. Results are intended to appear
+on this page; booking/payment opens an external provider. Google Flights is
+available in an expandable fallback, with results on Google's site.
+
+Widget type uses the site's existing HTTPS hosting; the White Label Page
+type's CNAME setup is not needed. Official setup:
+https://support.travelpayouts.com/hc/en-us/articles/26857907357458-Setting-up-a-White-Label-with-Widget-type
+
+Before publishing, verify on mobile and desktop: form rendering, airport/date/
+passenger selection, results/prices, booking redirects, and leaving/returning
+to Flights. These depend on the live Travelpayouts account and third-party
+service and are not verified by a local production build.
+
 ## Firestore guest list
 
 The people page reads `Trips/indonesia-2027/people` when opened (capital `T`). Each document
