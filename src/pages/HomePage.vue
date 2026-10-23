@@ -428,8 +428,12 @@
       <div style="max-width: 1000px; margin: 0 auto">
         <div class="section-eyebrow" style="color: #faf6f0">Save the Date</div>
         <h2 class="section-title" style="color: #faf6f0">
-          May &ndash; June <em>2027</em>
+          June &ndash; July <em>2027</em>
         </h2>
+        <p style="color: #faf6f0; text-align: center;">
+          June 25/26 &ndash; July 10/11 &middot; Exact travel dates to be confirmed.
+          Faded dates mark the flexible start and end days.
+        </p>
         <table
           style="
             width: 100%;
@@ -523,195 +527,41 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Week of May 16 -->
             <tr>
-              <td style="padding: 0.9rem 0">16</td>
-              <td style="padding: 0.9rem 0">17</td>
-              <td style="padding: 0.9rem 0">18</td>
-              <td style="padding: 0.9rem 0">19</td>
-              <td style="padding: 0.9rem 0">20</td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                21
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                22
-              </td>
+              <td style="padding: 0.9rem 0;"><span style="display: block; font-size: 0.55em; letter-spacing: 1px; opacity: 0.8;">JUN</span>20</td>
+              <td style="padding: 0.9rem 0;">21</td>
+              <td style="padding: 0.9rem 0;">22</td>
+              <td style="padding: 0.9rem 0;">23</td>
+              <td style="padding: 0.9rem 0;">24</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0; opacity: 0.6;">25</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">26</td>
             </tr>
-            <!-- Week of May 23 -->
             <tr>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                23
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                24
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                25
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                26
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                27
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                28
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                29
-              </td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">27</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">28</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">29</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">30</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;"><span style="display: block; font-size: 0.55em; letter-spacing: 1px; opacity: 0.8;">JUL</span>1</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">2</td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">3</td>
             </tr>
-            <!-- Week of May 30 → June 5 -->
             <tr>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--coral);
-                  color: #faf6f0;
-                "
-              >
-                30
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: linear-gradient(
-                    135deg,
-                    var(--coral) 0%,
-                    var(--coral) 50%,
-                    var(--gold) 50%,
-                    var(--gold) 100%
-                  );
-                  color: #faf6f0;
-                "
-              >
-                31
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--gold);
-                  color: var(--teal);
-                "
-              >
-                <span
-                  style="
-                    display: block;
-                    font-size: 0.55em;
-                    letter-spacing: 1px;
-                    opacity: 0.8;
-                  "
-                  >JUN</span
-                >1
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--gold);
-                  color: var(--teal);
-                "
-              >
-                2
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--gold);
-                  color: var(--teal);
-                "
-              >
-                3
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--gold);
-                  color: var(--teal);
-                "
-              >
-                4
-              </td>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--gold);
-                  color: var(--teal);
-                "
-              >
-                5
-              </td>
+              <td style="padding: 0.9rem 0; background: var(--coral); color: #faf6f0;">4</td>
+              <td style="padding: 0.9rem 0; background: linear-gradient(135deg, var(--coral) 0%, var(--coral) 50%, var(--gold) 50%, var(--gold) 100%); color: #faf6f0;">5</td>
+              <td style="padding: 0.9rem 0; background: var(--gold); color: var(--teal);">6</td>
+              <td style="padding: 0.9rem 0; background: var(--gold); color: var(--teal);">7</td>
+              <td style="padding: 0.9rem 0; background: var(--gold); color: var(--teal);">8</td>
+              <td style="padding: 0.9rem 0; background: var(--gold); color: var(--teal);">9</td>
+              <td style="padding: 0.9rem 0; background: var(--gold); color: var(--teal);">10</td>
             </tr>
-            <!-- Week of June 6 -->
             <tr>
-              <td
-                style="
-                  padding: 0.9rem 0;
-                  background: var(--gold);
-                  color: var(--teal);
-                "
-              >
-                6
-              </td>
-              <td style="padding: 0.9rem 0">7</td>
-              <td style="padding: 0.9rem 0">8</td>
-              <td style="padding: 0.9rem 0">9</td>
-              <td style="padding: 0.9rem 0">10</td>
-              <td style="padding: 0.9rem 0">11</td>
-              <td style="padding: 0.9rem 0">12</td>
+              <td style="padding: 0.9rem 0; background: var(--gold); color: var(--teal); opacity: 0.6;">11</td>
+              <td style="padding: 0.9rem 0;">12</td>
+              <td style="padding: 0.9rem 0;">13</td>
+              <td style="padding: 0.9rem 0;">14</td>
+              <td style="padding: 0.9rem 0;">15</td>
+              <td style="padding: 0.9rem 0;">16</td>
+              <td style="padding: 0.9rem 0;">17</td>
             </tr>
           </tbody>
         </table>
@@ -737,7 +587,7 @@
                 border-radius: 2px;
               "
             ></span>
-            May 21 &ndash; 31
+            June 25/26 &ndash; July 5
           </div>
           <div style="display: flex; align-items: center; gap: 0.5rem">
             <span
@@ -749,7 +599,7 @@
                 border-radius: 2px;
               "
             ></span>
-            May 31 &ndash; June 6
+            July 5 &ndash; 10/11
           </div>
         </div>
       </div>

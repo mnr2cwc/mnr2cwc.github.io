@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function validPerson() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['name', 'status'])
+        && data.keys().hasOnly(['name', 'status', 'createdAt', 'updatedAt'])
+        && data.name is string
+        && data.name.size() > 0
+        && data.name.size() <= 120
+        && data.status in ['invited', 'committed', 'interested']
+        && data.get('createdAt', request.time) is timestamp
+        && data.get('updatedAt', request.time) is timestamp;
+    }
+
+    // Only these documents are public. Never store contact information here.
+    match /Trips/indonesia-2027/people/{personId} {
+      allow read: if true;
+      allow create: if validPerson();
+
+      match /private/contact {
+        // Accept contact details only with a newly created person in one batch.
+        // No public read, update, or delete permission is granted.
+        allow create: if
+          !exists(/databases/$(database)/documents/Trips/indonesia-2027/people/$(personId))
+          && existsAfter(/databases/$(database)/documents/Trips/indonesia-2027/people/$(personId))
+          && request.resource.data.keys().hasOnly(['phone', 'email'])
+          && request.resource.data.keys().size() > 0
+          && request.resource.data.get('phone', '') is string
+          && request.resource.data.get('phone', '').size() <= 40
+          && request.resource.data.get('email', '') is string
+          && request.resource.data.get('email', '').size() <= 254;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
