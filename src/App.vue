@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { currentPage } from './navigation'
+import ProfilePage from './pages/ProfilePage.vue'
 import NavBar from './components/NavBar.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import HomePage from './pages/HomePage.vue'
@@ -9,24 +10,29 @@ import BaliHousingPage from './pages/BaliHousingPage.vue'
 import JavaPage from './pages/JavaPage.vue'
 import PeoplePage from './pages/PeoplePage.vue'
 import WelcomePage from './pages/WelcomePage.vue'
-import { visitor, isNamedVisitor } from './visitor'
+import { visitor, isNamedVisitor, authReady, initializeSession, leaveSession, sessionError } from './visitor'
+
+initializeSession()
 </script>
 
 <template>
-  <WelcomePage v-if="!visitor" />
+  <p v-if="!authReady" class="visitor-bar" role="status">Restoring your session…</p>
+  <WelcomePage v-else-if="!visitor" />
   <template v-else>
   <NavBar />
   <div class="visitor-bar">
     <span>{{ visitor.name === 'Guest' && !visitor.id ? 'Browsing as a guest' : `Welcome, ${visitor.name}` }}</span>
-    <button @click="visitor = null">Switch person</button>
+    <button @click="leaveSession">{{ isNamedVisitor ? 'Sign out' : 'Sign in' }}</button>
+    <p v-if="sessionError" role="alert">{{ sessionError }}</p>
   </div>
 
-  <HomePage v-if="currentPage === 'home' || (currentPage === 'people' && !isNamedVisitor)" />
+  <HomePage v-if="currentPage === 'home' || ((currentPage === 'people' || currentPage === 'profile') && !isNamedVisitor)" />
   <KomodoPage v-else-if="currentPage === 'komodo'" />
   <BaliPage v-else-if="currentPage === 'bali'" />
   <BaliHousingPage v-else-if="currentPage === 'bali-housing'" />
   <JavaPage v-else-if="currentPage === 'java'" />
   <PeoplePage v-else-if="currentPage === 'people' && isNamedVisitor" />
+  <ProfilePage v-else-if="currentPage === 'profile' && isNamedVisitor" />
 
   <SiteFooter />
   </template>

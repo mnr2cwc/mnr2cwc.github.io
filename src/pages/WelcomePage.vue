@@ -1,54 +1,87 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { addPerson, fetchPeople, type AttendanceStatus, type FirestorePerson } from '../data/firestorePeople'
-import { visitor } from '../visitor'
+import { ref } from 'vue'
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
+import { getTripApp } from '../firebase'
+import { visitor, sessionError, activateAccount, authFlowActive } from '../visitor'
 
-const people = ref<FirestorePerson[]>([])
-const selectedId = ref('')
-const loading = ref(true)
-const loadError = ref('')
-const saveError = ref('')
-const showNewPerson = ref(false)
-const saving = ref(false)
+const mode = ref<'signin' | 'signup' | 'reset'>('signin')
 const name = ref('')
-const status = ref<AttendanceStatus>('interested')
-const phone = ref('')
 const email = ref('')
-const createdPerson = ref<FirestorePerson | null>(null)
+const password = ref('')
+const busy = ref(false)
+const error = ref('')
+const message = ref('')
 
-async function loadPeople() {
-  loading.value = true
-  loadError.value = ''
+function authMessage(cause: unknown) {
+  const code = (cause as { code?: string })?.code
+  if (code === 'auth/email-already-in-use') return 'An account already exists for this email. Sign in or use Forgot password to reset it.'
+  if (code === 'auth/invalid-email') return 'Enter a valid email address.'
+  if (code === 'auth/network-request-failed' || code === 'unavailable') return 'Unable to reach Firebase. Check your connection and try again.'
+  if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return 'The email or password is incorrect. Try again or use Forgot password.'
+  if (code === 'auth/user-disabled') return 'This account has been disabled. Please contact the site owner.'
+  if (code === 'auth/account-exists-with-different-credential') return 'This email already uses another sign-in method. Sign in with your original method.'
+  if (code === 'permission-denied') return 'Your account is signed in, but the guest list permissions need updating. Please contact the site owner.'
+  if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return 'Sign-in was cancelled. You can try again.'
+  if (code === 'auth/popup-blocked') return 'Allow popups for this site and try again.'
+  if (code === 'auth/operation-not-allowed') return 'This sign-in method is not enabled yet. Please contact the site owner.'
+  if (code === 'auth/unauthorized-domain') return 'This website domain needs to be enabled for sign-in by the site owner.'
+  if (code === 'auth/weak-password' || code === 'auth/password-does-not-meet-requirements') return 'Choose a stronger password that meets the site’s password policy.'
+  if (code === 'auth/too-many-requests') return 'Too many attempts. Please wait a little before trying again.'
+  return `Unable to complete sign-in. Please try again${code ? ` (${code})` : ''}.`
+}
+
+async function submit() {
+  if (busy.value) return
+  busy.value = true
+  error.value = ''
+  sessionError.value = ''
+  message.value = ''
+  authFlowActive.value = true
+  let accountCreated = false
   try {
-    people.value = await fetchPeople()
-  } catch {
-    loadError.value = 'We couldn’t load the guest list. Try again or continue as a guest.'
+    const auth = getAuth(getTripApp())
+    if (mode.value === 'reset') {
+      await sendPasswordResetEmail(auth, email.value.trim())
+      message.value = 'If an account exists for this email, you’ll receive a password reset link.'
+    } else if (mode.value === 'signup') {
+      if (!name.value.trim()) throw new Error('Name required')
+      const credential = await createUserWithEmailAndPassword(auth, email.value.trim(), password.value)
+      accountCreated = true
+      await updateProfile(credential.user, { displayName: name.value.trim() })
+      await activateAccount(credential.user)
+    } else {
+      const credential = await signInWithEmailAndPassword(auth, email.value.trim(), password.value)
+      await activateAccount(credential.user)
+    }
+    password.value = ''
+  } catch (cause) {
+    error.value = accountCreated
+      ? `Your account was created, but setup could not finish. ${authMessage(cause)} Sign in again to retry setup; you don’t need to create another account.`
+      : authMessage(cause)
   } finally {
-    loading.value = false
+    authFlowActive.value = false
+    busy.value = false
   }
 }
 
-function selectPerson() {
-  const person = people.value.find(person => person.id === selectedId.value)
-  if (person) visitor.value = { id: person.id, name: person.name }
-}
-
-async function createPerson() {
-  if (saving.value) return
-  saving.value = true
-  saveError.value = ''
+async function googleSignIn() {
+  if (busy.value) return
+  busy.value = true
+  error.value = ''
+  sessionError.value = ''
+  authFlowActive.value = true
   try {
-    createdPerson.value = await addPerson(name.value, status.value, phone.value, email.value)
-    phone.value = ''
-    email.value = ''
-  } catch {
-    saveError.value = 'We couldn’t save your details. Please try again.'
+    const provider = new GoogleAuthProvider()
+    provider.setCustomParameters({ prompt: 'select_account' })
+    const credential = await signInWithPopup(getAuth(getTripApp()), provider)
+    await activateAccount(credential.user)
+  } catch (cause) {
+    error.value = authMessage(cause)
   } finally {
-    saving.value = false
+    authFlowActive.value = false
+    busy.value = false
   }
 }
-
-onMounted(loadPeople)
 </script>
 
 <template>
@@ -56,51 +89,23 @@ onMounted(loadPeople)
     <section class="welcome-card" aria-labelledby="welcome-title">
       <div class="hero-stamp">The Gang Goes to Indonesia</div>
       <h1 id="welcome-title">Ready for <em>adventure?</em></h1>
-      <p class="intro">Pick your name, join the crew, or take a look around.</p>
-
-      <template v-if="createdPerson">
-        <p class="confirmation" role="status">{{ createdPerson.name }} was successfully added to the guest list.</p>
-        <button class="primary" @click="visitor = { id: createdPerson.id, name: createdPerson.name }">Continue as {{ createdPerson.name }}</button>
-      </template>
-      <template v-else>
-        <form @submit.prevent="selectPerson">
-          <label for="existing-person">Already on the list?</label>
-          <p v-if="loading" role="status">Loading the crew…</p>
-          <div v-else-if="loadError" role="alert">
-            <p>{{ loadError }}</p>
-            <button class="text-button" type="button" @click="loadPeople">Try again</button>
-          </div>
-          <template v-else>
-            <select id="existing-person" v-model="selectedId" required :disabled="saving">
-              <option disabled value="">{{ people.length ? 'Select your name' : 'No people added yet' }}</option>
-              <option v-for="person in people" :key="person.id" :value="person.id">{{ person.name }}</option>
-            </select>
-            <button class="primary" :disabled="!selectedId || saving">Continue</button>
-          </template>
-        </form>
-
-        <div class="divider">New to the crew?</div>
-        <button class="secondary" :disabled="saving" :aria-expanded="showNewPerson" aria-controls="join-form" @click="showNewPerson = !showNewPerson">{{ showNewPerson ? 'Cancel' : 'Add New Person' }}</button>
-        <form v-if="showNewPerson" id="join-form" @submit.prevent="createPerson">
-          <fieldset :disabled="saving">
-            <label>Name<input v-model="name" autocomplete="name" required maxlength="120" pattern=".*\S.*" /></label>
-            <label>Status
-              <select v-model="status" required>
-                <option value="invited">Invited</option>
-                <option value="committed">Committed</option>
-                <option value="interested">Interested</option>
-              </select>
-            </label>
-            <label>Phone Number (optional)<input v-model="phone" type="tel" autocomplete="tel" maxlength="40" /></label>
-            <label>Email (optional)<input v-model="email" type="email" autocomplete="email" maxlength="254" /></label>
-            <p class="privacy-note">Your contact details stay private. Only your name and status appear on the guest list.</p>
-            <button class="primary">{{ saving ? 'Saving…' : 'Join the Crew' }}</button>
-          </fieldset>
-          <p v-if="saveError" role="alert">{{ saveError }}</p>
-        </form>
-      </template>
-
-      <button class="text-button guest-button" :disabled="saving" @click="visitor = { id: null, name: 'Guest' }">Continue as a Guest &rarr;</button>
+      <p class="intro">Sign in to join the crew, or explore as a guest.</p>
+      <h2>{{ mode === 'signup' ? 'Create your account' : mode === 'reset' ? 'Reset your password' : 'Welcome back' }}</h2>
+      <form @submit.prevent="submit">
+        <fieldset :disabled="busy">
+          <label v-if="mode === 'signup'">Name<input v-model="name" required maxlength="120" pattern=".*\S.*" autocomplete="name" /></label>
+          <label>Email<input v-model="email" required type="email" autocomplete="email" /></label>
+          <label v-if="mode !== 'reset'">Password<input v-model="password" required type="password" :minlength="mode === 'signup' ? 6 : undefined" :autocomplete="mode === 'signup' ? 'new-password' : 'current-password'" /></label>
+          <button class="primary">{{ busy ? 'Please wait…' : mode === 'signup' ? 'Create Account' : mode === 'reset' ? 'Send Reset Link' : 'Sign In' }}</button>
+        </fieldset>
+      </form>
+      <p v-if="error || sessionError" role="alert">{{ error || sessionError }}</p>
+      <p v-if="message" class="confirmation" role="status">{{ message }}</p>
+      <button v-if="mode === 'signin'" class="text-button" :disabled="busy" @click="mode = 'reset'; error = ''; message = ''">Forgot password?</button>
+      <div class="divider">or</div>
+      <button class="secondary" :disabled="busy" @click="googleSignIn">Continue with Google</button>
+      <button class="text-button" :disabled="busy" @click="mode = mode === 'signin' ? 'signup' : 'signin'; error = ''; message = ''; password = ''">{{ mode === 'signin' ? 'Create an account' : 'Back to sign in' }}</button>
+      <button class="text-button guest-button" :disabled="busy" @click="visitor = { id: null, name: 'Guest' }">Continue as a Guest &rarr;</button>
     </section>
   </main>
 </template>

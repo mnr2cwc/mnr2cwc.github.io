@@ -49,9 +49,24 @@
     >
       attendants
     </button>
+    <button
+      v-if="isNamedVisitor"
+      class="nav-btn nav-profile"
+      :class="{ active: currentPage === 'profile' }"
+      :aria-current="currentPage === 'profile' ? 'page' : undefined"
+      @click="navigate('profile')"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="9" r="3" />
+        <path d="M5 19a7 7 0 0 1 14 0" />
+      </svg>
+      Profile
+    </button>
   </nav>
 </template>
 
 <style scoped>
   nav { flex-wrap: wrap; }
+  .nav-profile { margin-left: auto; display: inline-flex; align-items: center; gap: 0.5rem; }
 </style>

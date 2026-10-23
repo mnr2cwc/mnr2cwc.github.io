@@ -34,6 +34,10 @@
             <div class="num">0?</div>
             <div class="label">Food Poisoning</div>
           </div>
+          <div class="hero-detail">
+            <div class="num">Hopefully</div>
+            <div class="label">LadyBoys</div>
+          </div>
         </div>
         <div class="hero-cards">
           <div class="dest-card" @click="navigate('komodo')">
