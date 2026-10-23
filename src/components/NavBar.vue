@@ -41,6 +41,13 @@
       East Java
     </button>
     <button
+      class="nav-btn"
+      :class="{ active: currentPage === 'flights' }"
+      @click="navigate('flights')"
+    >
+      Flights
+    </button>
+    <button
       v-if="isNamedVisitor"
       class="nav-btn"
       :class="{ active: currentPage === 'people' }"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { currentPage } from './navigation'
 import ProfilePage from './pages/ProfilePage.vue'
+import FlightsPage from './pages/FlightsPage.vue'
 import NavBar from './components/NavBar.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import HomePage from './pages/HomePage.vue'
@@ -31,6 +32,7 @@ initializeSession()
   <BaliPage v-else-if="currentPage === 'bali'" />
   <BaliHousingPage v-else-if="currentPage === 'bali-housing'" />
   <JavaPage v-else-if="currentPage === 'java'" />
+  <FlightsPage v-else-if="currentPage === 'flights'" />
   <PeoplePage v-else-if="currentPage === 'people' && isNamedVisitor" />
   <ProfilePage v-else-if="currentPage === 'profile' && isNamedVisitor" />
 

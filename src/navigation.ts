@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { isNamedVisitor } from './visitor'
 
-export type PageId = 'home' | 'komodo' | 'bali' | 'bali-housing' | 'java' | 'people' | 'profile'
+export type PageId = 'home' | 'komodo' | 'bali' | 'bali-housing' | 'java' | 'flights' | 'people' | 'profile'
 
 // Shared, app-wide current page. Replaces the legacy showPage() global.
 export const currentPage = ref<PageId>('home')
