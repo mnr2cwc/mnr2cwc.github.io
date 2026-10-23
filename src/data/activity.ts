@@ -8,7 +8,7 @@ export async function recordGuestEntry() {
 }
 
 export async function recordMemberSignIn(uid: string) {
-  await setDoc(doc(getTripDatabase(), 'Trips', 'indonesia-2027', 'memberActivity', uid), {
+  await setDoc(doc(getTripDatabase(), 'Trips', 'indonesia-2027', 'people', uid, 'private', 'activity'), {
     lastSignedInAt: serverTimestamp(),
   })
 }

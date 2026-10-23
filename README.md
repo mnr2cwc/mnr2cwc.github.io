@@ -21,7 +21,7 @@ a service-account private key. Restart `npm run dev` after changing `.env`.
 Each Continue as a Guest click creates a timestamp-only document under
 `Trips/indonesia-2027/guestEntries`. Successful email/password registration,
 email/password sign-in, and Google sign-in update
-`Trips/indonesia-2027/memberActivity/{authUid}.lastSignedInAt` with a server
+`Trips/indonesia-2027/people/{authUid}/private/activity.lastSignedInAt` with a server
 timestamp. Restoring an existing session does not change that timestamp.
 Activity failures do not prevent entry. A short notice appears on the welcome page.
 
@@ -31,6 +31,8 @@ to Authentication → Users. Deploy the rules before testing activity recording.
 Guest counts reflect button uses, not unique visitors, and unauthenticated events
 can be fabricated or repeated. These client-side records are usage indicators,
 not an authoritative authentication audit. No historical sign-ins are backfilled.
+Any older `memberActivity` records remain untouched; new sign-ins write only to
+the member's `private/activity` document.
 
 ## Sign-in setup
 

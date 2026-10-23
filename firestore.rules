@@ -59,7 +59,7 @@ service cloud.firestore {
         && request.resource.data.enteredAt == request.time;
     }
 
-    match /Trips/indonesia-2027/memberActivity/{uid} {
+    match /Trips/indonesia-2027/people/{uid}/private/activity {
       allow create, update: if signedIn() && request.auth.uid == uid
         && request.resource.data.keys().hasAll(['lastSignedInAt'])
         && request.resource.data.keys().hasOnly(['lastSignedInAt'])
