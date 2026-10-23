@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { getTripApp } from '../firebase'
-import { visitor, sessionError, activateAccount, authFlowActive } from '../visitor'
+import { continueAsGuest, sessionError, activateAccount, authFlowActive } from '../visitor'
 
 const mode = ref<'signin' | 'signup' | 'reset'>('signin')
 const name = ref('')
@@ -48,10 +48,10 @@ async function submit() {
       const credential = await createUserWithEmailAndPassword(auth, email.value.trim(), password.value)
       accountCreated = true
       await updateProfile(credential.user, { displayName: name.value.trim() })
-      await activateAccount(credential.user)
+      await activateAccount(credential.user, true)
     } else {
       const credential = await signInWithEmailAndPassword(auth, email.value.trim(), password.value)
-      await activateAccount(credential.user)
+      await activateAccount(credential.user, true)
     }
     password.value = ''
   } catch (cause) {
@@ -74,7 +74,7 @@ async function googleSignIn() {
     const provider = new GoogleAuthProvider()
     provider.setCustomParameters({ prompt: 'select_account' })
     const credential = await signInWithPopup(getAuth(getTripApp()), provider)
-    await activateAccount(credential.user)
+    await activateAccount(credential.user, true)
   } catch (cause) {
     error.value = authMessage(cause)
   } finally {
@@ -105,7 +105,8 @@ async function googleSignIn() {
       <div class="divider">or</div>
       <button class="secondary" :disabled="busy" @click="googleSignIn">Continue with Google</button>
       <button class="text-button" :disabled="busy" @click="mode = mode === 'signin' ? 'signup' : 'signin'; error = ''; message = ''; password = ''">{{ mode === 'signin' ? 'Create an account' : 'Back to sign in' }}</button>
-      <button class="text-button guest-button" :disabled="busy" @click="visitor = { id: null, name: 'Guest' }">Continue as a Guest &rarr;</button>
+      <button class="text-button guest-button" :disabled="busy" @click="continueAsGuest">Continue as a Guest &rarr;</button>
+      <p class="privacy-note activity-note">We record guest entries and members’ latest sign-in times to understand use of the trip site.</p>
     </section>
   </main>
 </template>
@@ -128,6 +129,7 @@ button { font: inherit; cursor: pointer; border-radius: 10px; padding: 0.85rem 1
 .guest-button { display: block; margin: 1.5rem auto 0; }
 .divider { text-align: center; color: var(--muted); margin: 1.5rem 0 1rem; font-size: 0.85rem; }
 .privacy-note { font-size: 0.8rem; line-height: 1.5; color: var(--muted); }
+.activity-note { margin-top: 1rem; text-align: center; }
 .confirmation { padding: 1rem; margin: 1.5rem 0; border-radius: 10px; background: var(--sand); color: var(--jungle); }
 [role="alert"] { color: var(--stamp-red); line-height: 1.5; }
 button:disabled { opacity: 0.5; cursor: default; }

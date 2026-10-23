@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth'
 import { getTripApp } from './firebase'
 import { ensureAccountPerson } from './data/firestorePeople'
+import { recordGuestEntry, recordMemberSignIn } from './data/activity'
 
 export const visitor = ref<{ id: string | null; name: string } | null>(null)
 export const authUser = ref<User | null>(null)
@@ -11,10 +12,22 @@ export const isNamedVisitor = computed(() => Boolean(authUser.value && visitor.v
 export const authFlowActive = ref(false)
 let started = false
 
-export async function activateAccount(user: User) {
+export async function activateAccount(user: User, recordSignIn = false) {
   authUser.value = user
   const person = await ensureAccountPerson(user)
   visitor.value = { id: user.uid, name: person.name }
+  if (recordSignIn) {
+    void recordMemberSignIn(user.uid).catch(() => {
+      console.warn('The sign-in activity could not be recorded.')
+    })
+  }
+}
+
+export function continueAsGuest() {
+  visitor.value = { id: null, name: 'Guest' }
+  void recordGuestEntry().catch(() => {
+    console.warn('The guest entry could not be recorded.')
+  })
 }
 
 

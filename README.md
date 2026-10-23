@@ -16,6 +16,24 @@ a service-account private key. Restart `npm run dev` after changing `.env`.
 
 ## Authentication
 
+## Usage activity
+
+Each Continue as a Guest click creates a timestamp-only document under
+`Trips/indonesia-2027/guestEntries`. Successful email/password registration,
+email/password sign-in, and Google sign-in update
+`Trips/indonesia-2027/memberActivity/{authUid}.lastSignedInAt` with a server
+timestamp. Restoring an existing session does not change that timestamp.
+Activity failures do not prevent entry. A short notice appears on the welcome page.
+
+The accompanying rules prohibit browser reads of both activity collections;
+view them as a project administrator in the Firebase console. Match member UIDs
+to Authentication → Users. Deploy the rules before testing activity recording.
+Guest counts reflect button uses, not unique visitors, and unauthenticated events
+can be fabricated or repeated. These client-side records are usage indicators,
+not an authoritative authentication audit. No historical sign-ins are backfilled.
+
+## Sign-in setup
+
 The welcome page supports Firebase email/password registration and sign-in,
 password reset emails, Google popup sign-in, and guest browsing. Firebase restores
 signed-in sessions across reloads. The attendants tab uses Firebase authentication,
