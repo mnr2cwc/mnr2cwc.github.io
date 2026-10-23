@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { addPerson, fetchPeople, type AttendanceStatus, type FirestorePerson } from '../data/firestorePeople'
 import { navigate } from '../navigation'
 
@@ -14,16 +14,25 @@ const status = ref<AttendanceStatus>('invited')
 const saving = ref(false)
 const actionError = ref('')
 const notice = ref('')
+let noticeTimer: ReturnType<typeof setTimeout> | undefined
+
+function dismissNotice() {
+  clearTimeout(noticeTimer)
+  notice.value = ''
+}
+
+onUnmounted(() => clearTimeout(noticeTimer))
 
 async function savePerson() {
   if (saving.value) return
   saving.value = true
   actionError.value = ''
-  notice.value = ''
+  dismissNotice()
   try {
     const person = await addPerson(name.value, status.value, phone.value, contactEmail.value)
     people.value = [...people.value, person].sort((a, b) => a.name.localeCompare(b.name))
-    notice.value = `${person.name} was successfully saved to Firestore.`
+    notice.value = `${person.name} has been added to the guest list.`
+    noticeTimer = setTimeout(dismissNotice, 5000)
     name.value = ''
     phone.value = ''
     contactEmail.value = ''
@@ -60,6 +69,17 @@ onMounted(loadPeople)
 
 <template>
   <main class="people-page">
+    <Teleport to="body">
+      <div class="toast-region" role="status" aria-live="polite" aria-atomic="true">
+        <Transition name="toast">
+          <div v-if="notice" class="success-toast">
+            <span class="toast-icon" aria-hidden="true">✓</span>
+            <div><strong>Person added</strong><p>{{ notice }}</p></div>
+            <button class="toast-close" type="button" aria-label="Dismiss notification" @click="dismissNotice">×</button>
+          </div>
+        </Transition>
+      </div>
+    </Teleport>
     <button class="back-button" @click="navigate('home')">&larr; Back to overview</button>
     <div class="section-eyebrow">The Gang</div>
     <h1 class="section-title">Who's <em>Going?</em></h1>
@@ -109,7 +129,6 @@ onMounted(loadPeople)
                 </form>
               </template>
               <p v-if="actionError" role="alert">{{ actionError }}</p>
-              <p v-if="notice" role="status">{{ notice }}</p>
           </td>
         </tr>
       </tbody>
@@ -120,6 +139,16 @@ onMounted(loadPeople)
 </template>
 
 <style scoped>
+.toast-region { position: fixed; top: 1rem; right: 1rem; z-index: 1000; width: min(380px, calc(100vw - 2rem)); pointer-events: none; }
+.success-toast { display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem; border: 1px solid rgba(61, 122, 92, 0.25); border-left: 4px solid var(--jungle); border-radius: 14px; background: var(--cream); color: var(--ink); box-shadow: 0 8px 32px rgba(27, 79, 90, 0.2); pointer-events: auto; }
+.toast-icon { display: grid; place-items: center; flex: 0 0 28px; height: 28px; border-radius: 50%; background: var(--jungle); color: white; }
+.success-toast strong { color: var(--teal); }
+.success-toast p { margin-top: 0.35rem; font-size: 0.9rem; line-height: 1.5; overflow-wrap: anywhere; }
+.toast-close { flex-shrink: 0; margin-left: auto; border: 0; background: transparent; color: var(--muted); font-size: 1.5rem; width: 32px; height: 32px; cursor: pointer; }
+.toast-close:focus-visible { outline: 2px solid var(--teal); border-radius: 4px; }
+.toast-enter-active, .toast-leave-active { transition: opacity 0.2s, transform 0.2s; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(-10px); }
+@media (prefers-reduced-motion: reduce) { .toast-enter-active, .toast-leave-active { transition: none; } }
 .people-page { max-width: 800px; min-height: 70vh; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
 .guest-panel { padding: 0; }
 .guest-panel:has(.person-form) { padding-bottom: 1.25rem; }
