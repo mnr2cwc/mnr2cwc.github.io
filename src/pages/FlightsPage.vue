@@ -1,9 +1,27 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import SavedFlights from '../components/SavedFlights.vue'
+import { installFlightCapture } from '../flights/captureFlight'
+import { authUser, visitor } from '../visitor'
+import { currentPage } from '../navigation'
 
 const widgetFailed = ref(false)
+const savedFlights = ref<InstanceType<typeof SavedFlights> | null>(null)
+const captureError = ref('')
+let captureController: ReturnType<typeof installFlightCapture> | undefined
+watch([authUser, currentPage, visitor], () => captureController?.refresh())
+onUnmounted(() => captureController?.stop())
 
 onMounted(() => {
+  captureController = installFlightCapture({
+    canCapture: () => Boolean(authUser.value),
+    isActive: () => Boolean(visitor.value) && currentPage.value === 'flights',
+    onCapture: capture => {
+      captureError.value = ''
+      savedFlights.value?.reviewCapture(capture)
+    },
+    onError: message => { captureError.value = message },
+  })
   // Load only after both widget containers exist. Keep this page mounted in App.vue
   // so the provider's single initialization survives navigation between tabs.
   const script = document.createElement('script')
@@ -29,6 +47,8 @@ const searchQuery = computed(() => `Round trip flights from ${origin.value.trim(
       <p class="date-note">Our suggested dates are June 25–July 11, 2027, flexible by a day. Choose your airports, dates, and passengers in the search form below.</p>
       <p class="hint">Search flights and compare airlines and prices here. Selecting a booking offer opens an external airline or travel agency website, where you complete your purchase.</p>
       <p v-if="widgetFailed" role="alert" class="hint">Flight search could not load. Please reload the page or use Google Flights below.</p>
+      <p class="hint">To share an option, open a flight’s full details and choose <strong>Capture this flight</strong>. Review the captured information below, then save it for the group. Sign in to capture and save.</p>
+      <p v-if="captureError" role="alert" class="hint">{{ captureError }}</p>
       <div id="tpwl-search"></div>
       <div id="tpwl-tickets"></div>
       <details class="fallback">
@@ -44,6 +64,7 @@ const searchQuery = computed(() => `Round trip flights from ${origin.value.trim(
       </form>
       </details>
     </section>
+    <SavedFlights ref="savedFlights" />
   </main>
 </template>
 

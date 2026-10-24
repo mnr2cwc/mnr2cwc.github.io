@@ -99,3 +99,61 @@ Vite embeds these configuration values at build time. Set them in the build
 environment before generating the static GitHub Pages output. Verify with
 `npm run build -- --outDir /tmp/indo-trip-build` to avoid replacing `docs/`
 during local checks.
+
+## Shared saved flights
+
+Signed-in users can open a flight’s full details in the embedded search and choose
+**Capture this flight**. The site fills an editable review form with airport codes,
+travel dates, airlines, the first available displayed offer's price/currency,
+flight/search link, times, layovers, and fare notes. Saved flights use wide cards
+with a price/action panel, airline heading, and separate outbound/return rows
+showing times, cities, travel duration, and connection airport timelines. The
+review form previews the same card and allows captured itinerary fields to be
+corrected before saving. Nothing is written to Firebase
+until the user reviews the details and chooses **Save and share flight**. Manual
+entry remains available beneath the search.
+
+The adapter in `src/flights/captureFlight.ts` reads the widget's open shadow DOM
+using component-class prefixes, not build-specific suffixes. It extracts the
+selected-ticket share link from the offer anchor's `fallback_url` without clicking
+Buy, following a booking redirect, or accessing the clipboard. If that link is
+unavailable, it retains the current search link. Opening a saved search link
+selects the Flights page after entry/sign-in.
+
+This is a DOM integration, not a supported provider data API. It may need updating
+when Travelpayouts changes its markup. The current English-language widget is
+supported for one-way and round-trip itineraries. Multi-city itineraries require
+manual entry. Dates without a displayed year use the next upcoming occurrence
+and are checked against the displayed weekday; uncertain dates stay blank.
+Missing fields require review, and flight numbers/passenger counts may need to
+be added manually. Capture failures keep the itinerary open with an error and
+manual-entry guidance. Captured values never fall back to the trip's suggested
+dates, airports, or price.
+
+Run `npm run test:flights` for fixture-based DOM tests covering extraction,
+international price formats, missing data, year rollover, share-link fallback,
+stale prices, sign-in gating, observer updates, cleanup, structured itinerary
+validation, historical entries, and rendered card content. The fixture reflects
+the provider's public module structure checked in October 2026. Before publishing,
+check a live search on mobile and desktop: open a flight, change fares/schedules,
+capture, review, save, reload, and reopen the selected flight. Fixture tests and a
+local build do not verify the third-party service or deployed Firestore rules.
+
+Snapshots are stored in `Trips/indonesia-2027/flights` with the creator's Firebase
+UID and a server-generated `savedAt` timestamp. New captures also store up to two
+structured `legs` (airports, cities, local times/dates, duration, connection
+airports) and a `fareSummary`. Historical entries without these optional fields
+still display their saved routes and dates; unknown times are labeled as missing. Everyone, including guests, can
+read these travel details. The form explains this visibility; do not put private
+booking references or contact information in notes. Only signed-in users may
+create snapshots, and only the creator may delete one. Updates are denied;
+remove and save again to replace an option. The list shows the latest 100 entries;
+Refresh loads other people's additions. Saved prices may change, and links to
+provider searches/offers may expire.
+
+Deploy `firestore.rules` with `firebase deploy --only firestore:rules` before using
+this feature on the live site. The updated rules allow the bounded itinerary fields. No new Firebase
+configuration or indexes are needed.
+Verify in the configured project: save as a signed-in user, reload and view as a
+guest or second account, remove as the owner, and confirm another account cannot
+remove that entry. A local production build does not verify deployed permissions.

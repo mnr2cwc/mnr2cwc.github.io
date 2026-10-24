@@ -52,6 +52,61 @@ service cloud.firestore {
       }
     }
 
+    // Shared fare snapshots contain travel details only; guests may view them.
+    match /Trips/indonesia-2027/flights/{flightId} {
+      function validStop(leg, index) {
+        return leg.stops.size() <= index || (leg.stops[index] is string && leg.stops[index].matches('^[A-Z]{3}$'));
+      }
+      function validLeg(leg) {
+        return leg is map
+          && leg.keys().hasAll(['origin', 'destination', 'originCity', 'destinationCity', 'departureTime', 'arrivalTime', 'departureDate', 'arrivalDate', 'duration', 'stops'])
+          && leg.keys().hasOnly(['origin', 'destination', 'originCity', 'destinationCity', 'departureTime', 'arrivalTime', 'departureDate', 'arrivalDate', 'duration', 'stops'])
+          && leg.origin is string && leg.origin.matches('^([A-Z]{3})?$')
+          && leg.destination is string && leg.destination.matches('^([A-Z]{3})?$')
+          && leg.originCity is string && leg.originCity.size() <= 120
+          && leg.destinationCity is string && leg.destinationCity.size() <= 120
+          && leg.departureTime is string && leg.departureTime.size() <= 30
+          && leg.arrivalTime is string && leg.arrivalTime.size() <= 30
+          && leg.departureDate is string && (leg.departureDate == '' || leg.departureDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'))
+          && leg.arrivalDate is string && (leg.arrivalDate == '' || leg.arrivalDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'))
+          && leg.duration is string && leg.duration.size() <= 80
+          && leg.stops is list && leg.stops.size() <= 6
+          && validStop(leg, 0) && validStop(leg, 1) && validStop(leg, 2)
+          && validStop(leg, 3) && validStop(leg, 4) && validStop(leg, 5);
+      }
+      function validItinerary(data) {
+        let legs = data.get('legs', []);
+        return legs is list && legs.size() <= 2
+          && (legs.size() == 0 || validLeg(legs[0]))
+          && (legs.size() < 2 || validLeg(legs[1]))
+          && data.get('fareSummary', '') is string && data.get('fareSummary', '').size() <= 240;
+      }
+      function validFlight() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['origin', 'destination', 'departure', 'returnDate', 'airline', 'flightNumbers', 'price', 'currency', 'link', 'notes', 'ownerUid', 'savedAt'])
+          && data.keys().hasOnly(['origin', 'destination', 'departure', 'returnDate', 'airline', 'flightNumbers', 'price', 'currency', 'link', 'notes', 'ownerUid', 'savedAt', 'legs', 'fareSummary'])
+          && data.origin is string && data.origin.matches('^[A-Z]{3}$')
+          && data.destination is string && data.destination.matches('^[A-Z]{3}$')
+          && data.origin != data.destination
+          && data.departure is string && data.departure.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+          && data.returnDate is string
+          && (data.returnDate == '' || (data.returnDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') && data.returnDate >= data.departure))
+          && data.airline is string && data.airline.size() > 0 && data.airline.size() <= 120
+          && data.flightNumbers is string && data.flightNumbers.size() <= 120
+          && data.price is number && data.price > 0 && data.price <= 1000000
+          && data.currency is string && data.currency.matches('^[A-Z]{3}$')
+          && data.link is string && data.link.size() <= 2000
+          && (data.link == '' || data.link.matches('^https://[^\\s]+$'))
+          && data.notes is string && data.notes.size() <= 2000
+          && data.ownerUid == request.auth.uid
+          && data.savedAt == request.time
+          && validItinerary(data);
+      }
+      allow read: if true;
+      allow create: if signedIn() && validFlight();
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+    }
+
     // Activity is visible only through the Firebase console to project admins.
     match /Trips/indonesia-2027/guestEntries/{entryId} {
       allow create: if request.resource.data.keys().hasAll(['enteredAt'])
