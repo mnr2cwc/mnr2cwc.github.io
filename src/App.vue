@@ -10,7 +10,7 @@ import KomodoPage from './pages/KomodoPage.vue'
 import BaliPage from './pages/BaliPage.vue'
 import BaliHousingPage from './pages/BaliHousingPage.vue'
 import JavaPage from './pages/JavaPage.vue'
-import PeoplePage from './pages/PeoplePage.vue'
+import AttendantsPage from './pages/AttendantsPage.vue'
 import WelcomePage from './pages/WelcomePage.vue'
 import { visitor, isNamedVisitor, authReady, initializeSession, leaveSession, sessionError } from './visitor'
 
@@ -34,12 +34,12 @@ watch(currentPage, (page) => {
     <p v-if="sessionError" role="alert">{{ sessionError }}</p>
   </div>
 
-  <HomePage v-if="currentPage === 'home' || ((currentPage === 'people' || currentPage === 'profile') && !isNamedVisitor)" />
+  <HomePage v-if="currentPage === 'home' || (currentPage === 'profile' && !isNamedVisitor)" />
   <KomodoPage v-else-if="currentPage === 'komodo'" />
   <BaliPage v-else-if="currentPage === 'bali'" />
   <BaliHousingPage v-else-if="currentPage === 'bali-housing'" />
   <JavaPage v-else-if="currentPage === 'java'" />
-  <PeoplePage v-else-if="currentPage === 'people' && isNamedVisitor" />
+  <AttendantsPage v-else-if="currentPage === 'people'" />
   <ProfilePage v-else-if="currentPage === 'profile' && isNamedVisitor" />
   </template>
   <div v-if="flightsVisited" v-show="visitor && authReady && currentPage === 'flights'">

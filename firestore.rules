@@ -28,6 +28,25 @@ service cloud.firestore {
         && validPerson()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'status', 'updatedAt']);
 
+      match /private/travel {
+        function ownsTravel() {
+          return signedIn() && personId == request.auth.uid
+            && get(/databases/$(database)/documents/Trips/indonesia-2027/people/$(personId)).data.ownerUid == request.auth.uid;
+        }
+        function validTravel() {
+          let data = request.resource.data;
+          return data.keys().hasAll(['city', 'departureAirports', 'updatedAt'])
+            && data.keys().hasOnly(['city', 'departureAirports', 'updatedAt'])
+            && data.city is string && data.city.trim().size() > 0 && data.city.size() <= 120
+            && data.departureAirports is list && data.departureAirports.size() > 0 && data.departureAirports.size() <= 20
+            && data.departureAirports.join(',').matches('^[A-Z]{3}(,[A-Z]{3}){0,19}$')
+            && data.departureAirports.toSet().size() == data.departureAirports.size()
+            && data.updatedAt == request.time;
+        }
+        allow read: if ownsTravel();
+        allow create, update: if ownsTravel() && validTravel();
+      }
+
       match /private/contact {
         function ownsPerson() {
           return signedIn()
@@ -103,7 +122,12 @@ service cloud.firestore {
           && validItinerary(data);
       }
       allow read: if true;
-      allow create: if signedIn() && validFlight();
+      function departureSetupComplete() {
+        let travel = get(/databases/$(database)/documents/Trips/indonesia-2027/people/$(request.auth.uid)/private/travel).data;
+        return travel.city is string && travel.city.trim().size() > 0
+          && travel.departureAirports is list && travel.departureAirports.size() > 0;
+      }
+      allow create: if signedIn() && departureSetupComplete() && validFlight();
       allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
     }
 

@@ -6,9 +6,11 @@ Indonesia Trip Planning
 The Flights page embeds Travelpayouts White Label Web **Widget** 23798 using
 the account-generated `https://tpscr.com/wl_web/main.js?wl_id=23798` module
 and the `tpwl-search` / `tpwl-tickets` containers. The module is loaded into
-the document head after the containers mount, on the first visit to Flights.
+the document head after the containers mount, on the first Flights visit after
+departure setup has been completed.
 The page remains mounted during navigation to preserve widget state.
-This uses public embed configuration, no private API token or Firebase backend.
+The provider embed uses public configuration and no private API token. Access
+to the Flights page requires the Firebase departure preferences described below.
 
 Manage the approved website Project, language, currency, default destination,
 colors, and Show hotels setting in Travelpayouts → White Label → WL Web.
@@ -29,7 +31,13 @@ service and are not verified by a local production build.
 
 ## Firestore guest list
 
-The people page reads `Trips/indonesia-2027/people` when opened (capital `T`). Each document
+The attendants tab is visible to guests and signed-in members. Guests see a
+sign-in prompt; the list component mounts and reads data only after sign-in.
+The selected tab is retained through sign-in. Signing out unmounts the list.
+Run `npm run test:attendants` to check the access flow.
+
+The people page reads `Trips/indonesia-2027/people` when opened by a signed-in
+member (capital `T`). Each document
 needs a string `name` and a `status` of `invited`, `committed`, or `interested`.
 The old spellings `commited` and `interest` are also accepted.
 The local `src/data/people.ts` list is preserved as a migration reference;
@@ -157,3 +165,58 @@ configuration or indexes are needed.
 Verify in the configured project: save as a signed-in user, reload and view as a
 guest or second account, remove as the owner, and confirm another account cannot
 remove that entry. A local production build does not verify deployed permissions.
+
+
+## Departure preferences and Flights access
+
+Registration and sign-in do not ask for travel information. On opening Flights,
+guests see a sign-in prompt. Signed-in users must save a **departure city** (no
+street address) and **at least one acceptable departure airport** before the
+embedded search or saved-flight interface opens. Existing accounts without
+preferences follow the same setup flow. Direct search links keep their URL and
+resume after sign-in/setup. A load failure shows Retry; a missing record shows
+setup. Saving failures preserve the form and keep unconfigured accounts gated.
+
+The same editor appears under **Profile → Departure preferences**. It saves
+independently of the name/RSVP/contact form, so people can update their profile
+before configuring Flights. Both entry points share the saved record and active
+session state. Switching accounts clears preferences and ignores late responses
+from the previous account. No travel fields are added to registration.
+
+Preferences live at
+`Trips/indonesia-2027/people/{authUid}/private/travel`:
+
+- `city`: a nonblank string, at most 120 characters.
+- `departureAirports`: 1–20 unique uppercase three-letter IATA codes. The first
+  entry is the default origin; Make default reorders the selected airports.
+- `updatedAt`: a server-generated timestamp.
+
+Only the matching signed-in profile owner can read/create/update that document.
+Preferences are separate from the public attendee list and shared flight data.
+Deploy the updated `firestore.rules` before testing the live flow. New flight
+snapshots also require completed departure preferences; **their origin does not
+have to belong to the saved airport list**. Shared snapshot read permissions
+remain public; the website's Flights interface requires setup.
+
+Saved airports are preferences, not a whitelist or a search filter. The first
+airport prefills the provider's form on initial load, and its airport field stays
+fully editable. Existing shared search URLs retain their own route. Changing a
+search origin never changes the saved preferences. Changes to the default take
+effect when the provider initializes on the next page load; an already-open
+search retains its current state. The Google Flights fallback likewise accepts
+any three-letter airport code. No automatic comparison across saved airports is
+performed.
+
+Airport selection searches a local OurAirports catalog by city/name/code, with
+keyboard support and removable selections. The catalog contains 8,801 open
+IATA-coded airports, downloaded October 24, 2026; see `public/data/README.md` and
+`scripts/update-airports.py` for attribution and refresh instructions. Airport
+queries stay in the browser; the catalog loads only when the editor is opened.
+
+`npm run test:flights` covers preference validation, airport lookup, failed loads
+and saves, account-switch races, shared Profile/Flights editing, direct-link
+setup, delayed widget loading, and unrestricted search origins, along with the
+existing capture/card tests. These DOM tests mock Firebase and do not verify the
+live provider, deployed rules, or layout in a browser. Before publishing, test
+new/existing accounts, guest entry, save/reload, cross-account isolation, profile
+updates, a shared search link, and search from an unsaved airport.

@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { fetchMyProfile, saveMyProfile, type MyProfile } from '../data/firestorePeople'
 import { authUser, visitor } from '../visitor'
+import DeparturePreferencesEditor from '../components/DeparturePreferencesEditor.vue'
 import { navigate } from '../navigation'
 
 const profile = reactive<MyProfile>({ name: '', status: 'interested', phone: '', email: '' })
@@ -63,6 +64,7 @@ onUnmounted(() => clearTimeout(timer))
       </fieldset>
       <p v-if="saveError" role="alert">{{ saveError }}</p>
     </form>
+    <DeparturePreferencesEditor :key="authUser?.uid" />
     <Teleport to="body"><div class="profile-notice" role="status" aria-live="polite"><div v-if="notice" class="notice"><span aria-hidden="true">✓</span> {{ notice }}<button aria-label="Dismiss notification" @click="notice = ''">×</button></div></div></Teleport>
   </main>
 </template>

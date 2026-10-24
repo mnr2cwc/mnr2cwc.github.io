@@ -48,7 +48,6 @@
       Flights
     </button>
     <button
-      v-if="isNamedVisitor"
       class="nav-btn"
       :class="{ active: currentPage === 'people' }"
       :aria-current="currentPage === 'people' ? 'page' : undefined"

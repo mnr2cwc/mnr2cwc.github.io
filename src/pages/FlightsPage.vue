@@ -1,38 +1,77 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import SavedFlights from '../components/SavedFlights.vue'
+import DeparturePreferencesEditor from '../components/DeparturePreferencesEditor.vue'
+import { departurePreferences as preferences } from '../departurePreferences'
 import { installFlightCapture } from '../flights/captureFlight'
-import { authUser, visitor } from '../visitor'
-import { currentPage } from '../navigation'
+import { authUser, visitor, isNamedVisitor, leaveSession } from '../visitor'
+import { currentPage, navigate } from '../navigation'
 
 const widgetFailed = ref(false)
+const toolMounted = ref(false)
+const origin = ref('')
 const savedFlights = ref<InstanceType<typeof SavedFlights> | null>(null)
 const captureError = ref('')
+const canUseFlights = computed(() => isNamedVisitor.value && preferences.ready.value)
+let widgetStarted = false
+let widgetStarting = false
 let captureController: ReturnType<typeof installFlightCapture> | undefined
-watch([authUser, currentPage, visitor], () => captureController?.refresh())
-onUnmounted(() => captureController?.stop())
-
-onMounted(() => {
+watch([isNamedVisitor, () => authUser.value?.uid, currentPage], () => {
+  if (isNamedVisitor.value && currentPage.value === 'flights') void preferences.load()
+}, { immediate: true })
+watch(() => preferences.preferences.value, data => {
+  if (data) origin.value = data.departureAirports[0] ?? ''
+  else { origin.value = ''; captureError.value = '' }
+})
+watch([canUseFlights, currentPage, visitor], async () => {
+  const active = canUseFlights.value && currentPage.value === 'flights' && Boolean(visitor.value)
+  document.body.classList.toggle('flight-tool-blocked', !active)
+  if (!active) {
+    const modals = document.getElementById('tpwl-modals')?.shadowRoot
+    if (modals?.querySelector('[class*="Modal-module__root___"]')) {
+      const count = Math.min(modals.querySelectorAll('[class*="Modal-module__root___"]').length, 10)
+      for (let index = 0; index < count; index++) document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }))
+      if (document.body.style.overflow === 'hidden') document.body.style.overflow = ''
+    }
+  }
+  captureController?.refresh()
+  if (!active || widgetStarted || widgetStarting) return
+  widgetStarting = true
+  const userId = authUser.value?.uid
+  toolMounted.value = true
+  origin.value = preferences.preferences.value?.departureAirports[0] ?? ''
+  await nextTick()
+  widgetStarting = false
+  if (!canUseFlights.value || currentPage.value !== 'flights' || authUser.value?.uid !== userId) return
+  widgetStarted = true
+  const config = window as Window & { TPWL_CONFIGURATION?: Record<string, unknown> }
+  config.TPWL_CONFIGURATION = {
+    ...config.TPWL_CONFIGURATION,
+    flightParams: { origin: origin.value, destination: 'DPS' },
+  }
   captureController = installFlightCapture({
-    canCapture: () => Boolean(authUser.value),
-    isActive: () => Boolean(visitor.value) && currentPage.value === 'flights',
+    canCapture: () => canUseFlights.value,
+    isActive: () => canUseFlights.value && Boolean(visitor.value) && currentPage.value === 'flights',
     onCapture: capture => {
       captureError.value = ''
       savedFlights.value?.reviewCapture(capture)
     },
     onError: message => { captureError.value = message },
   })
-  // Load only after both widget containers exist. Keep this page mounted in App.vue
-  // so the provider's single initialization survives navigation between tabs.
+  // Initialize the provider once per document, after setup succeeds and its
+  // containers exist. Retain its DOM during navigation and gate it on re-entry.
   const script = document.createElement('script')
   script.async = true
   script.type = 'module'
   script.src = 'https://tpscr.com/wl_web/main.js?wl_id=23798'
   script.addEventListener('error', () => { widgetFailed.value = true }, { once: true })
   document.head.appendChild(script)
+}, { immediate: true, flush: 'post' })
+onUnmounted(() => {
+  captureController?.stop()
+  document.body.classList.remove('flight-tool-blocked')
 })
 
-const origin = ref('')
 const searchQuery = computed(() => `Round trip flights from ${origin.value.trim().toUpperCase()} to DPS departing June 25 2027 returning July 11 2027`)
 </script>
 
@@ -41,6 +80,20 @@ const searchQuery = computed(() => `Round trip flights from ${origin.value.trim(
     <div class="section-eyebrow">Getting There</div>
     <h1 class="section-title">Find Your <em>Flight</em></h1>
     <p class="intro">One destination. Wherever you're starting from.</p>
+    <section v-if="!isNamedVisitor" class="flight-card access-prompt" aria-label="Sign in to use Flights">
+      <h2>Plan your departure</h2>
+      <p class="hint">Sign in, then save your departure city and at least one airport to use Flights.</p>
+      <button type="button" @click="leaveSession">Sign in to use Flights</button>
+    </section>
+    <p v-else-if="preferences.loading.value || !preferences.loaded.value && !preferences.error.value" role="status">Loading your departure preferences…</p>
+    <section v-else-if="preferences.error.value" class="flight-card" role="alert"><p>{{ preferences.error.value }}</p><button type="button" @click="preferences.load(true)">Try again</button></section>
+    <DeparturePreferencesEditor v-else-if="!canUseFlights" :key="authUser?.uid" setup />
+    <div v-if="toolMounted" v-show="canUseFlights">
+    <section class="departure-summary" aria-label="Your departure preferences">
+      <p>Leaving from <strong>{{ preferences.preferences.value?.city }}</strong></p>
+      <p class="hint">Saved airports: {{ preferences.preferences.value?.departureAirports.join(', ') }}. You can search from any airport below.</p>
+      <button type="button" class="change-preferences" @click="navigate('profile')">Edit departure preferences in Profile</button>
+    </section>
     <section class="flight-card" aria-label="Search flights to Bali">
       <div class="destination"><span aria-hidden="true">✈</span><div><h2>Bali, Indonesia</h2><p>Ngurah Rai International Airport · DPS</p></div></div>
       <dl class="dates"><div><dt>Departure</dt><dd>June 25, 2027</dd></div><div><dt>Return</dt><dd>July 11, 2027</dd></div></dl>
@@ -64,13 +117,17 @@ const searchQuery = computed(() => `Round trip flights from ${origin.value.trim(
       </form>
       </details>
     </section>
-    <SavedFlights ref="savedFlights" />
+    <SavedFlights v-if="canUseFlights" :key="authUser?.uid" ref="savedFlights" />
+    </div>
   </main>
 </template>
 
 <style scoped>
 .flights-page { max-width: 1200px; min-height: 70vh; margin: auto; padding: 3rem 1.25rem 5rem; }
 #tpwl-search, #tpwl-tickets { width: 100%; min-width: 0; margin-top: 1.5rem; }
+.departure-summary { margin-bottom: 1.5rem; padding: 1rem 1.25rem; background: white; border-radius: 14px; line-height: 1.6; }
+.change-preferences { padding: 0; background: transparent; color: var(--teal); text-decoration: underline; font-size: 0.8rem; }
+.change-preferences:hover { background: transparent; }
 .fallback { margin-top: 2rem; }
 summary { color: var(--teal); cursor: pointer; line-height: 1.6; }
 @media (max-width: 600px) {
@@ -91,4 +148,9 @@ input { width: 100%; padding: 1rem; border: 1px solid var(--muted); border-radiu
 button { padding: 1rem; border: 0; border-radius: 10px; background: var(--teal); color: var(--cream); font: inherit; cursor: pointer; margin-top: 0.5rem; }
 button:hover { background: var(--jungle); }
 :is(button, input):focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+</style>
+
+<style>
+/* The provider appends its modals to body, outside the Flights page. */
+.flight-tool-blocked #tpwl-modals { display: none !important; }
 </style>
